@@ -4,7 +4,6 @@ from config import Config
 
 client = None
 db = None
-
 def init_db():
     print("Skipping DB connection for now")
 
