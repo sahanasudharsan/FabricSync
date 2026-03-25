@@ -6,11 +6,7 @@ client = None
 db = None
 
 def init_db():
-    """Initialize MongoDB connection"""
-    global client, db
-    client = MongoClient(Config.MONGODB_URI)
-    db = client[Config.DB_NAME]
-    return db
+    print("Skipping DB connection for now")
 
 def get_db():
     """Get database instance"""
