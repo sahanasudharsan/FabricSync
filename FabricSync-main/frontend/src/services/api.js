@@ -1,22 +1,23 @@
 import axios from 'axios'
 
 const getApiBase = () => {
-  // Production: Use environment variable
-  if (import.meta.env.VITE_API_URL) {
-    return import.meta.env.VITE_API_URL.replace(/\/$/, '') + '/api'
+  const configuredUrl = import.meta.env.VITE_API_URL?.trim()
+  if (configuredUrl) {
+    const normalized = configuredUrl.replace(/\/+$/, '')
+    console.log('[api] VITE_API_URL:', normalized)
+    return `${normalized}/api`
   }
 
-  // Development fallback
   if (
     window.location.hostname === 'localhost' ||
     window.location.hostname === '127.0.0.1'
   ) {
+    console.log('[api] Using local dev backend: http://localhost:5000/api')
     return 'http://localhost:5000/api'
   }
 
-  // Final fallback (warn if env missing)
-  console.error('⚠️ VITE_API_URL not set. Using /api fallback')
-  return '/api'
+  console.warn('⚠️ VITE_API_URL not set. Falling back to same-origin /api - set VITE_API_URL in production')
+  return `${window.location.protocol}//${window.location.hostname}/api`
 }
 
 const API_BASE = getApiBase()
