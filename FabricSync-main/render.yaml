@@ -1,0 +1,36 @@
+services:
+  - type: web
+    name: fabricsync-api
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.9
+      - key: SECRET_KEY
+        generateValue: true
+      - key: JWT_SECRET_KEY
+        generateValue: true
+      - key: MONGODB_URI
+        fromDatabase:
+          name: fabricsync-db
+          property: connectionString
+      - key: DB_NAME
+        value: fabricsync
+
+  - type: web
+    name: fabricsync-frontend
+    env: static
+    buildCommand: cd frontend && npm install && npm run build
+    staticPublishPath: frontend/dist
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          name: fabricsync-api
+          type: web
+          property: url
+
+databases:
+  - name: fabricsync-db
+    databaseName: fabricsync
+    user: fabricsync

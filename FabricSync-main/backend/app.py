@@ -28,7 +28,19 @@ from routes.wage_routes import wage_bp
 def create_app():
     app = Flask(__name__)
     app.config['SECRET_KEY'] = Config.SECRET_KEY
-    CORS(app, origins=['http://localhost:5173', 'http://127.0.0.1:5173'], supports_credentials=True)
+
+    # Allow Localhost + Production
+    CORS(
+        app,
+        origins=[
+            "http://localhost:3000",
+            "http://127.0.0.1:3000",
+            "http://localhost:5173",
+            "https://fabric-sync.vercel.app",
+            "https://*.onrender.com"
+        ],
+        supports_credentials=True
+    )
     
     init_db()
     
@@ -55,4 +67,4 @@ def create_app():
 app = create_app()
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='127.0.0.1', port=5000, debug=True)

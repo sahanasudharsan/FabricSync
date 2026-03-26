@@ -1,6 +1,37 @@
 import axios from 'axios'
 
-const API_BASE = (import.meta.env.VITE_API_URL || '') + '/api'
+const getApiBase = () => {
+  // Check if we're in production and have a custom API URL
+  if (import.meta.env.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL + '/api'
+  }
+  
+  // For Vercel serverless functions
+  if (window.location.hostname.includes('vercel.app')) {
+    return '/api'
+  }
+  
+  // For Render or other production environments
+  if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+    // Try to detect the API URL based on current hostname
+    const protocol = window.location.protocol
+    const hostname = window.location.hostname
+    
+    // If on Render, frontend and API might be on different subdomains
+    if (hostname.includes('onrender.com')) {
+      // Assume API is on a different service, use environment variable
+      return '/api'
+    }
+    
+    // Default to same origin
+    return `${protocol}//${hostname}/api`
+  }
+  
+  // Development fallback
+  return 'http://localhost:5000/api'
+}
+
+const API_BASE = getApiBase()
 
 const api = axios.create({
   baseURL: API_BASE,
